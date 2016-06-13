@@ -119,7 +119,7 @@ def set_status(room, value):
         set_on_off(room, True)
         set_mode(room, value)
 def get_setpoint(room):
-    mode = get_status(room)
+    mode = get_mode(room)
     if mode == 'cool':
         return get_cool_setpoint(room)
     elif mode == 'heat':
@@ -127,9 +127,9 @@ def get_setpoint(room):
     elif mode == 'auto':
         return get_auto_setpoint(room)
     else:
-        return 'off'
+        return 'err'
 def set_setpoint(room, value):
-    mode = get_status(room)
+    mode = get_mode(room)
     if mode == 'cool':
         set_cool_setpoint(room, value)
     elif mode == 'heat':
