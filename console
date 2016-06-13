@@ -2,6 +2,12 @@
 
 from bac import *
 
+properties = ['state', 'mode', 'setpt', 'temp', 'fan', 'dir']
+getters = [get_state, get_mode, get_setpoint,
+           get_temperature, get_fan_speed, get_air_direction]
+setters = [set_state, set_mode, set_setpoint,
+           set_setpoint, set_fan_speed, set_air_direction]
+
 while True:
     try:
         cmd = input('> ').split()
@@ -9,56 +15,37 @@ while True:
             continue
         elif cmd[0] == 'summary':
             if len(cmd) == 1:
-                format_str = '{:<6} {:<6} {:<6} {:<6} {:<6} {:<6}'
-                print(format_str.format('room', 'mode', 'setpt',
-                                        'temp', 'fan', 'dir'))
+                format_str = '{:<4}' + ' {:<6}' * len(properties)
+                print(format_str.format('', *properties))
                 for room in sorted(rooms.keys()):
-                    print(format_str.format(room,
-                                            get_status(room),
-                                            get_setpoint(room),
-                                            get_temperature(room),
-                                            get_fan_speed(room),
-                                            get_air_direction(room)))
+                    print(format_str.format(
+                        room, *[getter(room) for getter in getters]))
             else:
                 print('Usage: summary')
         elif cmd[0] == 'get':
             if len(cmd) == 2:
-                format_str = '{:<6} {:<6} {:<6} {:<6} {:<6}'
-                print(format_str.format('mode', 'setpt',
-                                        'temp', 'fan', 'dir'))
-                print(format_str.format(get_status(cmd[1]),
-                                        get_setpoint(cmd[1]),
-                                        get_temperature(cmd[1]),
-                                        get_fan_speed(cmd[1]),
-                                        get_air_direction(cmd[1])))
-            elif len(cmd) == 3:
-                room, property = cmd[1], cmd[2]
-                function = {'mode': get_status,
-                            'setpt': get_setpoint,
-                            'temp': get_temperature,
-                            'fan': get_fan_speed,
-                            'dir': get_air_direction}[cmd[2]]
-                print(function(cmd[1]))
+                for prop, getter in zip(properties, getters):
+                    print('{:<6} {}'.format(prop, getter(cmd[1])))
+            elif len(cmd) == 3 and cmd[2] in properties:
+                print(getters[properties.index(cmd[2])](cmd[1]))
             else:
-                print('Usage: get room [property]')
+                print('Usage: get room [prop]')
         elif cmd[0] == 'set':
-            if len(cmd) == 4:
-                function = {'mode': set_status,
-                            'setpt': set_setpoint,
-                            'fan': set_fan_speed,
-                            'dir': set_air_direction}[cmd[2]]
-                function(cmd[1], cmd[3])
+            if len(cmd) == 4 and cmd[2] in properties:
+                setters[properties.index(cmd[2])](cmd[1], cmd[3])
             else:
-                print('Usage: set room property value')
+                print('Usage: set room prop value')
         elif cmd[0] == 'exit':
             exit()
         else:
             print('Commands: summary get set exit')
             print('Rooms: {}'.format(' '.join(sorted(rooms.keys()))))
-            print('Properties: mode setpt temp fan dir')
-            print('Values (mode): off {}'.format(' '.join(modes[1:])))
-            print('Values (fan): {}'.format(' '.join(fan_speeds[1:])))
-            print('Values (dir): {}'.format(' '.join(air_directions[1:])))
+            print('Properties: {}'.format(' '.join(properties)))
+            print('Values (state): {}'.format(' '.join(states)))
+            print('Values (mode): {}'.format(' '.join(modes)))
+            print('Values (fan): {}'.format(' '.join(fan_speeds)))
+            print('Values (dir): {}'.format(' '.join(air_directions)))
+            print('setpt, temp in degrees F')
     except EOFError:
         exit()
     except KeyboardInterrupt:
