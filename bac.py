@@ -75,25 +75,26 @@ def mitsu_comm(room, attribute, new_value=None):
     return value
 
 ### Wrapper functions ###
-def get_on_off(room):
-    return mitsu_comm(room, 'on_off_state')
-def set_on_off(room, value):
-    mitsu_comm(room, 'on_off_setup', bool(value))
-modes = [0, 'cool', 'heat', 'fan', 'auto', 'dry', 'setback']
+states = ['off', 'on']
+def get_state(room):
+    return states[mitsu_comm(room, 'on_off_state')]
+def set_state(room, value):
+    mitsu_comm(room, 'on_off_setup', bool(states.index(value)))
+modes = ['cool', 'heat', 'fan', 'auto', 'dry', 'setback']
 def get_mode(room):
-    return modes[mitsu_comm(room, 'mode_state')]
+    return modes[mitsu_comm(room, 'mode_state')-1]
 def set_mode(room, value):
-    mitsu_comm(room, 'mode_setup', modes.index(value))
-fan_speeds = [0, 'low', 'high', 'mid2', 'mid1']
+    mitsu_comm(room, 'mode_setup', modes.index(value)+1)
+fan_speeds = ['low', 'high', 'mid2', 'mid1']
 def get_fan_speed(room):
-    return fan_speeds[mitsu_comm(room, 'fan_speed_state')]
+    return fan_speeds[mitsu_comm(room, 'fan_speed_state')-1]
 def set_fan_speed(room, value):
-    mitsu_comm(room, 'fan_speed_setup', fan_speeds.index(value))
-air_directions = [0, 'horiz', 'down60', 'down80', 'down100', 'swing']
+    mitsu_comm(room, 'fan_speed_setup', fan_speeds.index(value)+1)
+air_directions = ['horiz', 'down60', 'down80', 'down100', 'swing']
 def get_air_direction(room):
-    return air_directions[mitsu_comm(room, 'air_direction_state')]
+    return air_directions[mitsu_comm(room, 'air_direction_state')-1]
 def set_air_direction(room, value):
-    mitsu_comm(room, 'air_direction_setup', air_directions.index(value))
+    mitsu_comm(room, 'air_direction_setup', air_directions.index(value)+1)
 def get_heat_setpoint(room):
     return mitsu_comm(room, 'set_temp_heat')
 def set_heat_setpoint(room, value):
@@ -106,18 +107,6 @@ def get_auto_setpoint(room):
     return mitsu_comm(room, 'set_temp_auto')
 def set_auto_setpoint(room, value):
     mitsu_comm(room, 'set_temp_auto', float(value))
-def get_temperature(room):
-    return mitsu_comm(room, 'room_temp')
-
-### Indirect wrapper functions ###
-def get_status(room):
-    return get_mode(room) if get_on_off(room) else 'off'
-def set_status(room, value):
-    if value == 'off':
-        set_on_off(room, False)
-    else:
-        set_on_off(room, True)
-        set_mode(room, value)
 def get_setpoint(room):
     mode = get_mode(room)
     if mode == 'cool':
@@ -127,7 +116,7 @@ def get_setpoint(room):
     elif mode == 'auto':
         return get_auto_setpoint(room)
     else:
-        return 'err'
+        return ''
 def set_setpoint(room, value):
     mode = get_mode(room)
     if mode == 'cool':
@@ -136,3 +125,5 @@ def set_setpoint(room, value):
         set_heat_setpoint(room, value)
     elif mode == 'auto':
         set_auto_setpoint(room, value)
+def get_temperature(room):
+    return mitsu_comm(room, 'room_temp')
