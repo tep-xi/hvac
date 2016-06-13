@@ -113,11 +113,10 @@ def get_temperature(room):
 def get_status(room):
     return get_mode(room) if get_on_off(room) else 'off'
 def set_status(room, value):
-    if value == 'on':
-        set_on_off(room, True)
-    elif value == 'off':
+    if value == 'off':
         set_on_off(room, False)
     else:
+        set_on_off(room, True)
         set_mode(room, value)
 def get_setpoint(room):
     mode = get_status(room)
