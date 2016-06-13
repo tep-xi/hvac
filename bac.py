@@ -1,4 +1,6 @@
 # Written by dlaw@mit.edu in 2016.
+# This file may be used on its own.
+# It does not depend on the rest of this repository.
 
 import socket, struct
 
