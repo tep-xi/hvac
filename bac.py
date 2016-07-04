@@ -15,6 +15,7 @@ def build_message(object, data=b''):
 def communicate(message, server='bacnet.mit.edu', port=0xbac0):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(message, (server, port))
+    sock.settimeout(0.5)
     response, addr = sock.recvfrom(1024)
     sock.close()
     return response
