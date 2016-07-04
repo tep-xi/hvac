@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>{{ room }} HVAC controls</title>
+  </head>
+  <body>
+    <p><b>{{ room }} HVAC controls</b><br>
+      Current temperature: {{ temp }} F
+      {% if msg is not none %}
+    <p>
+      {% for line in msg.splitlines() %}
+      {{line}}<br>
+      {% endfor %}
+      {% endif %}
+    <form method="post" action="{{ room }}">
+      {% for attr in attrs %}
+      <p>{{ attr[0] }}<br>
+	{% if attr[1] is none %}
+	<input type="text" name="{{ attr[0] }}" value="{{ attr[2] }}"/>
+	{% else %}
+        {% for item in attr[1] %}
+        <label><input type="radio" name="{{ attr[0] }}" value="{{ item }}"{% if attr[2] == item %} checked{% endif %}/>{{ item }}</label><br>
+        {% endfor %}
+	{% endif %}
+	{% endfor %}
+      <p><input type="submit" value="Apply"/>
+    </form>
+  </body>
+</html>
