@@ -24,7 +24,7 @@ def room_selector():
     return flask.render_template('index.html',
                                  rooms=sorted(rooms.keys()))
 
-@app.route('/<room>', methods=['GET'])
+@app.route('/room/<room>', methods=['GET'])
 def show_controls(room, msg=None):
     attrs = [['State', states, get_state(room)],
              ['Mode', modes[:3], get_mode(room)],
@@ -34,7 +34,7 @@ def show_controls(room, msg=None):
     return flask.render_template('room.html', room=room, attrs=attrs,
                                  msg=msg, temp=get_temperature(room))
 
-@app.route('/<room>', methods=['POST'])
+@app.route('/room/<room>', methods=['POST'])
 def set_controls(room):
     response = flask.request.form
     msg = 'Settings applied successfully.'
