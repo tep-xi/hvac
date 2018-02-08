@@ -52,8 +52,8 @@ def set_controls(room):
         temp = max(temp, min_cool_temp)
     elif mode == hvac_mode.heat:
         temp = min(temp, max_heat_temp)
-    set_mode(room, mode, temp)
     do_set(room, attr.fan_speed, fan_speed(int(response['Fan speed'])))
+    set_mode(room, mode, temp)
     for group in groups:
         if room in group:
             for other_room in group:
@@ -63,6 +63,19 @@ def set_controls(room):
                     msg += ('\n{} forced from {} to {}.'
                             .format(other_room, other_mode, mode))
     return show_controls(room, msg)
+
+modeset = { hvac_mode.cool: (air_direction.horiz, attr.set_temp_cool)
+          , hvac_mode.heat: (air_direction.down100, attr.set_temp_heat)
+          , hvac_mode.auto: (None, attr.set_temp_auto)
+          }
+def set_mode(room, mode, temp=None):
+    do_set(room, attr.mode, mode)
+    if mode in modeset:
+        ad, setter = modeset[mode]
+        if ad is not None and room != '51':
+            do_set(room, attr.air_direction, ad)
+        if temp is not None:
+            do_set(room, setter, temp)
 
 if __name__ == '__main__':
     host, port = sys.argv[1], sys.argv[2]

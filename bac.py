@@ -75,20 +75,6 @@ def do_set(room, objt, val):
     msg = build_message(build_set(obj, val))
     communicate(msg)
 
-modeset = { hvac_mode.cool: (air_direction.horiz, attr.set_temp_cool)
-          , hvac_mode.heat: (air_direction.down100, attr.set_temp_heat)
-          , hvac_mode.auto: (None, attr.set_temp_auto)
-          }
-def set_mode(room, mode, temp=None):
-    do_set(room, attr.mode, mode)
-    if mode in modeset:
-        ad, setter = modeset[mode]
-        if ad is not None:
-            do_set(room, attr.air_direction, ad)
-        if temp is not None:
-            do_set(room, setter, temp)
-
-
 def communicate(message, server='bacnet.mit.edu', port=0xbac0):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(message, (server, port))
