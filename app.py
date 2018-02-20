@@ -45,7 +45,6 @@ def show_controls(room, msg=None):
 def set_controls(room):
     response = flask.request.form
     msg = 'Settings applied successfully.'
-    do_set(room, attr.state, hvac_state(int(response['State'])))
     mode = hvac_mode(int(response['Mode']))
     temp = float(response['Setpoint'])
     if mode == hvac_mode.cool:
@@ -62,6 +61,7 @@ def set_controls(room):
                     set_mode(room, mode)
                     msg += ('\n{} forced from {} to {}.'
                             .format(other_room, other_mode, mode))
+    do_set(room, attr.state, hvac_state(int(response['State'])))
     return show_controls(room, msg)
 
 modeset = { hvac_mode.cool: (air_direction.horiz, attr.set_temp_cool)
