@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 from bac import *
 import flask, sys
@@ -61,7 +61,7 @@ def set_controls(room):
                     set_mode(room, mode)
                     msg += ('\n{} forced from {} to {}.'
                             .format(other_room, other_mode, mode))
-    do_set(room, attr.state, hvac_state(int(response['State'])))
+    do_set(room, attr.state, hvac_state(response['State'] != 'False'))
     return show_controls(room, msg)
 
 modeset = { hvac_mode.cool: (air_direction.horiz, attr.set_temp_cool)
@@ -78,5 +78,5 @@ def set_mode(room, mode, temp=None):
             do_set(room, setter, temp)
 
 if __name__ == '__main__':
-    host, port = sys.argv[1], sys.argv[2]
+    host, port = sys.argv[1], int(sys.argv[2])
     app.run(host=host, port=port)

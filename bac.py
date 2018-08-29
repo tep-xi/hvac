@@ -13,8 +13,8 @@ class MyEnum(Enum):
         return self.name[:1].upper() + self.name[1:]
 
 class hvac_state(MyEnum):
-    off = 0
-    on = 1
+    off = False
+    on = True
 
 class hvac_mode(MyEnum):
     cool = 1
